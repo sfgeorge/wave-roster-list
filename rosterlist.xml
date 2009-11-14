@@ -7,6 +7,7 @@
 	</ModulePrefs>
 	<Content type="html"><![CDATA[
 
+
 		<style type="text/css">
 			* { margin: 0; padding: 0; }
 			ul, ol
@@ -18,7 +19,7 @@
 			.hidden { display: none; }
 
 			ul.participants { width: 50%; }
-			ul.participants li.img { padding: 30px 0 30px 80px; }
+			.profileimg { padding-right: 5px; vertical-align: middle; }
 			.glite { background-color: #f6bc5d; }
 			.showall { padding-left: 10px; font-size: smaller; }
 		</style>
@@ -31,8 +32,8 @@
 				</div>
 				<div>
 					<div><div id="participants_container"></div></div>
-					<div id="options" class="hidden">
-						<input id="show_images" name="show_images" type="checkbox" onchange="form_change(); return true;" />
+					<div id="options">
+						<input id="show_images" name="show_images" type="checkbox" checked="checked" onchange="form_change(); return true;" />
 						<label for="show_images">Show images</label>
 					</div>
 				</div>
@@ -55,13 +56,11 @@
 				if( show_default_text )
 				{
 					document.getElementById( 'term' ).value = "(Search " + wave.getParticipants().length + " participants)";
-					document.getElementById( 'options' ).className = 'hidden';
 					return;
 				}
 
 				if(!wave.getState()) { return; }
 				addOptions( wave.getParticipants(), searchterm );
-				document.getElementById( 'options' ).className = '';
 			}
 
 			function addOptions( participants, searchterm )
@@ -86,22 +85,20 @@
 						label = label.replace( searchpattern, "<strong>$1</strong>" );
 					}
 					num_matches++;
-					li_attr = '';
+					img_html = '';
 					if( do_show_images )
 					{
 						profile_img = participants[ i ].getThumbnailUrl();
 						if( profile_img )
 						{
-							li_attr = ' class="img" style="background: url(\'' + profile_img +  '\') no-repeat 0px 0px;"';
+							img_html = '<img src="' + profile_img + '" class="profileimg" width="40" height="40" alt="' + participants[ i ].getDisplayName() + '" />';
 						}
 					}
-					list_html += '<li' + li_attr + '>' + label + "</li>\n";
+					list_html += '<li>' + img_html + label + "</li>\n";
 				}
-				html = "";
-				html += "<div>Showing <strong>" + num_matches
-					+ "</strong> of <strong>" + num_participants + "</strong></div>\n";
-				html += '<ul class="participants">\n' + list_html + "</ul>\n";
-				participants_container.innerHTML = html;
+				participants_container.innerHTML = "<div>Showing <strong>" + num_matches
+					+ "</strong> of <strong>" + num_participants + "</strong></div>\n"
+					+ '<ul class="participants">\n' + list_html + "</ul>\n";
 			}
 
 			function getLabel( participant )
