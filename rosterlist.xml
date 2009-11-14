@@ -21,7 +21,7 @@
 			ul.participants li { padding-bottom: 1px; }
 			.profileimg { padding-right: 5px; vertical-align: middle; }
 			.glite { background-color: #eeeeee; }
-			.showall { padding-left: 10px; font-size: smaller; }
+			.option { padding-left: 10px; font-size: smaller; }
 			.pagination_controls { padding-left: 15px; font-size: smaller; }
 		</style>
 
@@ -29,13 +29,14 @@
 			<form name="searchform" method="get" onsubmit="javascript:return false;">
 				<div>
 					<input type="text" id="term" name="term" value="" onfocus="checkDefaultText(); return true;" onkeyup="form_change(); return true;" />
-					<a href="#show-all" class="showall" onclick="javascript:refresh(); return false;">show all</a>
+					<a href="#show-all" class="option" onclick="javascript:refresh(); return false;">show all</a>
 				</div>
 				<div>
 					<div><div id="participants_container"></div></div>
 					<div id="options">
 						<input id="show_images" name="show_images" type="checkbox" checked="checked" onchange="javascript:checkDefaultText(); form_change(); return true;" />
 						<label for="show_images">Show images</label>
+						<a target="_blank" href="http://code.google.com/p/wave-roster-list/" class="option">(gadget info)</a>
 					</div>
 				</div>
 			</form>
