@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module>
-	<ModulePrefs title="Hello Wave">
+	<ModulePrefs title="Hello Wave" height="40">
 		<Require feature="wave" />
 		<Require feature="dynamic-height" /> 
 		<Require feature="locked-domain" />  
