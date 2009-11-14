@@ -56,7 +56,12 @@
 
 				if( show_default_text )
 				{
-					document.getElementById( 'term' ).value = "(Search " + wave.getParticipants().length + " participants)";
+					num_peeps = wave.getParticipants().length;
+					document.getElementById( 'term' ).value = "(Search " + num_peeps
+						+ ( 1 == num_peeps ? " participant)" : " participants)" );
+
+					// Tells gadget to resize itself
+					gadgets.window.adjustHeight();
 					return;
 				}
 
