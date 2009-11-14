@@ -1,0 +1,164 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+	<ModulePrefs title="Hello Wave">
+		<Require feature="wave" />
+		<!-- <Require feature="dynamic-height" />  --> 
+		<Require feature="locked-domain" />  
+	</ModulePrefs>
+	<Content type="html"><![CDATA[
+
+		<style type="text/css">
+			* { margin: 0; padding: 0; }
+			ul, ol
+			{
+				list-style-image: none;
+				list-style-position: outside;
+				list-style-type: none;
+			}
+			.hidden { display: none; }
+
+			ul.participants { width: 50%; }
+			ul.participants li.img { padding: 30px 0 30px 80px; }
+			.glite { background-color: #f6bc5d; }
+			.showall { padding-left: 10px; font-size: smaller; }
+		</style>
+
+		<div id="content_div">
+			<form name="searchform" method="get" onsubmit="javascript:return false;">
+				<div>
+					<input type="text" id="term" name="term" value="" onfocus="checkDefaultText( this ); return true;" onkeyup="form_change(); return true;" />
+					<a href="#show-all" class="showall" onclick="javascript:refresh(); return false;">show all</a>
+				</div>
+				<div>
+					<div><div id="participants_container"></div></div>
+					<div id="options" class="hidden">
+						<input id="show_images" name="show_images" type="checkbox" onchange="form_change(); return true;" />
+						<label for="show_images">Show images</label>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<script language="JavaScript" type="text/javascript">
+
+			initialized = false;
+			show_default_text = true;
+
+			function renderList( searchterm )
+			{
+				if( ! initialized )
+				{
+					initialized = true;
+					return;
+				}
+
+				if( show_default_text )
+				{
+					document.getElementById( 'term' ).value = "(Search " + wave.getParticipants().length + " participants)";
+					document.getElementById( 'options' ).className = 'hidden';
+					return;
+				}
+
+				if(!wave.getState()) { return; }
+				addOptions( wave.getParticipants(), searchterm );
+				document.getElementById( 'options' ).className = '';
+			}
+
+			function addOptions( participants, searchterm )
+			{
+				participants_container = document.getElementById( 'participants_container' );
+				searchform = document.forms[ 'searchform' ];
+				do_show_images = searchform.elements[ 'show_images' ].checked;
+				list_html = "";
+				num_participants = participants.length;
+				num_matches = 0;
+				for( var i = 0; i < num_participants; i++ )
+				{
+					label = getLabel( participants[ i ] );
+					if( searchterm && searchterm != "" )
+					{
+						pattern = "(" + RegExp.escape( searchterm ) + ")";
+						searchpattern = new RegExp( pattern, 'ig' );
+						if( ! label.match( searchpattern ) )
+						{
+							continue;
+						}
+						label = label.replace( searchpattern, "<strong>$1</strong>" );
+					}
+					num_matches++;
+					li_attr = '';
+					if( do_show_images )
+					{
+						profile_img = participants[ i ].getThumbnailUrl();
+						if( profile_img )
+						{
+							li_attr = ' class="img" style="background: url(\'' + profile_img +  '\') no-repeat 0px 0px;"';
+						}
+					}
+					list_html += '<li' + li_attr + '>' + label + "</li>\n";
+				}
+				html = "";
+				html += "<div>Showing <strong>" + num_matches
+					+ "</strong> of <strong>" + num_participants + "</strong></div>\n";
+				html += '<ul class="participants">\n' + list_html + "</ul>\n";
+				participants_container.innerHTML = html;
+			}
+
+			function getLabel( participant )
+			{
+				return participant.getDisplayName()
+					+ " (" + participant.getId() + ")";
+			}
+
+			function checkDefaultText( term )
+			{
+				if( show_default_text )
+				{
+					term.value = '';
+					show_default_text = false;
+				}
+			}
+
+			function form_change()
+			{
+				renderList( document.getElementById( 'term' ).value );
+			}
+
+			function refresh()
+			{
+				document.getElementById( 'term' ).value = '';
+				show_default_text = false;
+				renderList();
+				show_default_text = true;
+				renderList();
+			}
+
+			function init()
+			{
+				// Thanks to http://simonwillison.net/2006/Jan/20/escape/
+				RegExp.escape = function(text)
+				{
+					if (!arguments.callee.sRE)
+					{
+						var specials =
+						[
+							'/', '.', '*', '+', '?', '|',
+							'(', ')', '[', ']', '{', '}', '\\'
+						];
+						arguments.callee.sRE = new RegExp( '(\\' + specials.join('|\\') + ')', 'g' );
+					}
+					return text.replace(arguments.callee.sRE, '\\$1');
+				}
+
+				if (wave && wave.isInWaveContainer())
+				{
+					wave.setStateCallback( renderList );
+					wave.setParticipantCallback( renderList );
+				}
+			}
+			gadgets.util.registerOnLoadHandler(init);
+		</script>
+
+
+	]]></Content>
+</Module>
