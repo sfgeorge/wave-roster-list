@@ -22,18 +22,19 @@
 			.profileimg { padding-right: 5px; vertical-align: middle; }
 			.glite { background-color: #eeeeee; }
 			.showall { padding-left: 10px; font-size: smaller; }
+			.pagination_controls { padding-left: 15px; font-size: smaller; }
 		</style>
 
 		<div id="content_div">
 			<form name="searchform" method="get" onsubmit="javascript:return false;">
 				<div>
-					<input type="text" id="term" name="term" value="" onfocus="checkDefaultText( this ); return true;" onkeyup="form_change(); return true;" />
+					<input type="text" id="term" name="term" value="" onfocus="checkDefaultText(); return true;" onkeyup="form_change(); return true;" />
 					<a href="#show-all" class="showall" onclick="javascript:refresh(); return false;">show all</a>
 				</div>
 				<div>
 					<div><div id="participants_container"></div></div>
 					<div id="options">
-						<input id="show_images" name="show_images" type="checkbox" checked="checked" onchange="form_change(); return true;" />
+						<input id="show_images" name="show_images" type="checkbox" checked="checked" onchange="javascript:checkDefaultText(); form_change(); return true;" />
 						<label for="show_images">Show images</label>
 					</div>
 				</div>
@@ -42,11 +43,11 @@
 
 		<script language="JavaScript" type="text/javascript">
 
-			var MAX_SHOWN = 10;
+			var PAGE_SIZE = 10;
 			var initialized = false;
 			var show_default_text = true;
 
-			function renderList( searchterm )
+			function renderList( searchterm, limit_start )
 			{
 				if( ! initialized )
 				{
@@ -66,10 +67,10 @@
 				}
 
 				if(!wave.getState()) { return; }
-				addOptions( wave.getParticipants(), searchterm );
+				addOptions( wave.getParticipants(), searchterm, limit_start );
 			}
 
-			function addOptions( participants, searchterm )
+			function addOptions( participants, searchterm, limit_start )
 			{
 				participants_container = document.getElementById( 'participants_container' );
 				searchform = document.forms[ 'searchform' ];
@@ -77,10 +78,11 @@
 				list_html = "";
 				num_participants = participants.length;
 				num_matches = 0;
+				limit_start = limit_start || 0;
+				limit_end = limit_start + PAGE_SIZE;
 				highlight = true;
 				for( var i = 0; i < num_participants; i++ )
 				{
-					highlight = ! highlight;
 					label = getLabel( participants[ i ] );
 					if( searchterm && searchterm != "" )
 					{
@@ -93,6 +95,9 @@
 						label = label.replace( searchpattern, "<strong>$1</strong>" );
 					}
 					num_matches++;
+					if( num_matches <= limit_start ) { continue; }
+					if( num_matches > limit_end ) { continue; }
+					highlight = ! highlight;
 					li_attr = '';
 					img_html = '';
 					if( do_show_images )
@@ -109,13 +114,11 @@
 						li_attr = ' class="glite"';
 					}
 					list_html += '<li' + li_attr + '>' + img_html + label + "</li>\n";
-
-					if( num_matches == MAX_SHOWN ) { break; }
 				}
 
 				// Finally, update the list
-				participants_container.innerHTML = "<div>Showing <strong>" + num_matches
-					+ "</strong> of <strong>" + num_participants + "</strong></div>\n"
+				participants_container.innerHTML =
+					getPaginationHTML( limit_start, num_matches )
 					+ '<ul class="participants">\n' + list_html + "</ul>\n";
 
 				// Tells gadget to resize itself
@@ -128,27 +131,57 @@
 					+ " (" + participant.getId() + ")";
 			}
 
-			function checkDefaultText( term )
+			function getPaginationHTML( limit_start, num_matches )
+			{
+				// Update the limits and increment them from 0-based to 1-based numbers
+				show_limit_end = limit_start + Math.min( PAGE_SIZE, num_matches ) - 1;
+				show_limit_start = limit_start + 1;
+				show_limit_end++;
+				if( 0 == num_matches ) { show_limit_start = 0; }
+
+				controls_html = '';
+				if( limit_start > 0 )
+				{
+					controls_html += ' <a href="#back" onclick="javascript:checkDefaultText(); form_change(' + ( limit_start - PAGE_SIZE ) + '); return false;">&laquo; back</a>&nbsp; ';
+				}
+				if( show_limit_end < num_matches )
+				{
+					controls_html += ' <a href="#forward" onclick="javascript:checkDefaultText(); form_change(' + ( limit_start + PAGE_SIZE ) + '); return false;">forward &raquo;</a>';
+				}
+				if( controls_html )
+				{
+					controls_html = '<span class="pagination_controls">' + controls_html + '</span>';
+				}
+
+				return '<div>'
+						+ 'Showing <strong>' + show_limit_start + '</strong>'
+						+ ' - <strong>' + show_limit_end + '</strong>'
+						+ ' of <strong>' + num_matches + '</strong>'
+						+ controls_html
+					+ '</div>\n';
+			}
+
+			function checkDefaultText()
 			{
 				if( show_default_text )
 				{
-					term.value = '';
+					document.getElementById( 'term' ).value = '';
 					show_default_text = false;
 				}
 			}
 
-			function form_change()
+			function form_change( limit_start )
 			{
-				renderList( document.getElementById( 'term' ).value );
+				renderList( document.getElementById( 'term' ).value, limit_start );
 			}
 
 			function refresh()
 			{
 				document.getElementById( 'term' ).value = '';
 				show_default_text = false;
-				renderList();
+				form_change();
 				show_default_text = true;
-				renderList();
+				form_change();
 			}
 
 			function init()
@@ -170,8 +203,8 @@
 
 				if (wave && wave.isInWaveContainer())
 				{
-					wave.setStateCallback( renderList );
-					wave.setParticipantCallback( renderList );
+					wave.setStateCallback( form_change );
+					wave.setParticipantCallback( form_change );
 				}
 			}
 			gadgets.util.registerOnLoadHandler(init);
