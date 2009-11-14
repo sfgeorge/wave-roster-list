@@ -2,7 +2,7 @@
 <Module>
 	<ModulePrefs title="Hello Wave">
 		<Require feature="wave" />
-		<!-- <Require feature="dynamic-height" />  --> 
+		<Require feature="dynamic-height" /> 
 		<Require feature="locked-domain" />  
 	</ModulePrefs>
 	<Content type="html"><![CDATA[
@@ -18,9 +18,9 @@
 			}
 			.hidden { display: none; }
 
-			ul.participants { width: 50%; }
+			ul.participants li { padding-bottom: 1px; }
 			.profileimg { padding-right: 5px; vertical-align: middle; }
-			.glite { background-color: #f6bc5d; }
+			.glite { background-color: #eeeeee; }
 			.showall { padding-left: 10px; font-size: smaller; }
 		</style>
 
@@ -42,8 +42,9 @@
 
 		<script language="JavaScript" type="text/javascript">
 
-			initialized = false;
-			show_default_text = true;
+			var MAX_SHOWN = 10;
+			var initialized = false;
+			var show_default_text = true;
 
 			function renderList( searchterm )
 			{
@@ -71,8 +72,10 @@
 				list_html = "";
 				num_participants = participants.length;
 				num_matches = 0;
+				highlight = true;
 				for( var i = 0; i < num_participants; i++ )
 				{
+					highlight = ! highlight;
 					label = getLabel( participants[ i ] );
 					if( searchterm && searchterm != "" )
 					{
@@ -85,20 +88,33 @@
 						label = label.replace( searchpattern, "<strong>$1</strong>" );
 					}
 					num_matches++;
+					li_attr = '';
 					img_html = '';
 					if( do_show_images )
 					{
 						profile_img = participants[ i ].getThumbnailUrl();
 						if( profile_img )
 						{
-							img_html = '<img src="' + profile_img + '" class="profileimg" width="40" height="40" alt="' + participants[ i ].getDisplayName() + '" />';
+							display_name = participants[ i ].getDisplayName();
+							img_html = '<img src="' + profile_img + '" class="profileimg" width="40" height="40" title="' + display_name + '" alt="' + display_name + '" />';
 						}
 					}
-					list_html += '<li>' + img_html + label + "</li>\n";
+					else if( highlight )
+					{
+						li_attr = ' class="glite"';
+					}
+					list_html += '<li' + li_attr + '>' + img_html + label + "</li>\n";
+
+					if( num_matches == MAX_SHOWN ) { break; }
 				}
+
+				// Finally, update the list
 				participants_container.innerHTML = "<div>Showing <strong>" + num_matches
 					+ "</strong> of <strong>" + num_participants + "</strong></div>\n"
 					+ '<ul class="participants">\n' + list_html + "</ul>\n";
+
+				// Tells gadget to resize itself
+				gadgets.window.adjustHeight();	
 			}
 
 			function getLabel( participant )
