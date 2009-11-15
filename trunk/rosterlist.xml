@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module>
-	<ModulePrefs
-		title="Hello Wave"
-		title_url="http://code.google.com/p/wave-roster-list/"
-		description="Search through wave participants"
-		author="Stephen F. George"
-		author_email="s.f.george+roster@gmail.com"
-		screenshot="http://wave-roster-list.googlecode.com/svn/trunk/images/screenshot.png"
-		thumbnail="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-w182.png"
-		height="30">
+	<ModulePrefs title="Hello Wave" height="40">
 		<Require feature="wave" />
 		<Require feature="dynamic-height" /> 
 		<Require feature="locked-domain" />  
