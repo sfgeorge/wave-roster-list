@@ -6,7 +6,12 @@
 		title_url="http://code.google.com/p/wave-roster-list/"
 		description="Search through wave participants"
 		author="Stephen F. George"
+		author_aboutme="Senior software architect"
 		author_email="s.f.george+roster@gmail.com"
+		author_link="http://www.linkedin.com/in/sfgeorge"
+		author_location="Chicago, IL"
+		author_photo="http://picasaweb.google.com/lh/photo/P3mPFUT1SaMLbiFCMwQh_Q?authkey=Gv1sRgCNfwou3zkpCV2gE&feat=directlink"
+		author_quote="Are you gonna eat that?"
 		screenshot="http://wave-roster-list.googlecode.com/svn/trunk/images/screenshot.png"
 		thumbnail="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-w182.png"
 		height="40">
