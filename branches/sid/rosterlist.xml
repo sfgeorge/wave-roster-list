@@ -9,7 +9,7 @@
 		author_email="s.f.george+roster@gmail.com"
 		screenshot="http://wave-roster-list.googlecode.com/svn/trunk/images/screenshot.png"
 		thumbnail="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-w182.png"
-		height="40">
+		height="20">
 		<Require feature="wave" />
 		<Require feature="dynamic-height" />
 		<Require feature="locked-domain" />
@@ -19,35 +19,37 @@
 
 		<style type="text/css">
 			* { margin: 0; padding: 0; }
+			a:link, a:visited, a:hover { text-decoration: none; }
 			ul, ol
 			{
 				list-style-image: none;
 				list-style-position: outside;
 				list-style-type: none;
 			}
-			.hidden { display: none; }
 
+			.termbox { width: 13.5em; }
+			.checkbox { vertical-align: text-bottom; }
 			ul.participants li { padding-bottom: 1px; }
 			.profileimg { padding-right: 5px; vertical-align: middle; }
 			.glite { background-color: #eeeeee; }
-			.option { padding-left: 10px; font-size: smaller; }
+			.small { font-size: smaller; }
+			.option { padding-left: 10px; }
 			.pagination_controls { padding-left: 15px; font-size: smaller; }
+			.about { font-size: smaller; margin-top: 3px; }
+			.about a { font-size: smaller; }
 		</style>
 
 		<div id="content_div">
 			<form name="searchform" method="get" onsubmit="javascript:return false;">
-				<div>
-					<input type="text" id="term" name="term" value="" onfocus="checkDefaultText(); return true;" onkeyup="form_change(); return true;" />
+				<div class="small">
+					<input type="text" id="term" name="term" class="termbox" value="" onfocus="checkDefaultText(); return true;" onkeyup="form_change(); return true;" />
 					<a href="#show-all" class="option" onclick="javascript:refresh(); return false;">show all</a>
-				</div>
-				<div>
-					<div><div id="participants_container"></div></div>
-					<div id="options">
-						<input id="show_images" name="show_images" type="checkbox" checked="checked" onchange="javascript:checkDefaultText(); form_change(); return true;" />
+					<span class="option">
+						<input id="show_images" name="show_images" type="checkbox" class="checkbox" checked="checked" onchange="javascript:checkDefaultText(); form_change(); return true;" />
 						<label for="show_images">Show images</label>
-						<a target="_blank" href="http://code.google.com/p/wave-roster-list/" class="option">(gadget info)</a>
-					</div>
+					</span>
 				</div>
+				<div id="participants_container"></div>
 			</form>
 		</div>
 
@@ -119,17 +121,20 @@
 							img_html = '<img src="' + profile_img + '" class="profileimg" width="40" height="40" title="' + display_name + '" alt="' + display_name + '" />';
 						}
 					}
-					else if( highlight )
+					if( highlight )
 					{
 						li_attr = ' class="glite"';
 					}
 					list_html += '<li' + li_attr + '>' + img_html + label + "</li>\n";
 				}
 
+				about_html = getAboutGadgetHTML();
+
 				// Finally, update the list
 				participants_container.innerHTML =
 					getPaginationHTML( limit_start, num_matches )
-					+ '<ul class="participants">\n' + list_html + "</ul>\n";
+					+ '<div>\n<ul class="participants">\n' + list_html + '</ul>\n</div>\n'
+					+ '<div>' + about_html + '</div>\n';
 
 				// Tells gadget to resize itself
 				gadgets.window.adjustHeight();
@@ -169,6 +174,16 @@
 						+ ' of <strong>' + num_matches + '</strong>'
 						+ controls_html
 					+ '</div>\n';
+			}
+
+			function getAboutGadgetHTML()
+			{
+				var about_url = '#restored:wave:wavesandbox.com!w%252ByUWu0XBCA';
+				if( document.location.pathname.indexOf( '/a/wavesandbox.com' ) == -1 )
+				{
+					about_url = '#restored:wave:googlewave.com!w%252Bk2VcYCfkA';
+				} 
+				return '<span class="about"><a href="' + about_url + '>(about this gadget ...)</a></span>';
 			}
 
 			function checkDefaultText()
