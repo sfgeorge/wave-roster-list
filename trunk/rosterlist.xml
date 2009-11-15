@@ -13,7 +13,7 @@
 		<Require feature="dynamic-height" /> 
 		<Require feature="locked-domain" />  
 	</ModulePrefs>
-	<Content type="html" preferred_height="30"><![CDATA[
+	<Content type="html"><![CDATA[
 
 
 		<style type="text/css">
