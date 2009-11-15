@@ -1,0 +1,225 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Module>
+	<ModulePrefs
+		directory_title="Roster List Gadget for Google \/\/ave"
+		title="Roster List Gadget for Google \/\/ave"
+		title_url="http://code.google.com/p/wave-roster-list/"
+		description="Search through wave participants"
+		author="Stephen F. George"
+		author_email="s.f.george+roster@gmail.com"
+		screenshot="http://wave-roster-list.googlecode.com/svn/trunk/images/screenshot.png"
+		thumbnail="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-w182.png"
+		height="40">
+		<Require feature="wave" />
+		<Require feature="dynamic-height" />
+		<Require feature="locked-domain" />
+	</ModulePrefs>
+	<Content type="html"><![CDATA[
+
+
+		<style type="text/css">
+			* { margin: 0; padding: 0; }
+			ul, ol
+			{
+				list-style-image: none;
+				list-style-position: outside;
+				list-style-type: none;
+			}
+			.hidden { display: none; }
+
+			ul.participants li { padding-bottom: 1px; }
+			.profileimg { padding-right: 5px; vertical-align: middle; }
+			.glite { background-color: #eeeeee; }
+			.option { padding-left: 10px; font-size: smaller; }
+			.pagination_controls { padding-left: 15px; font-size: smaller; }
+		</style>
+
+		<div id="content_div">
+			<form name="searchform" method="get" onsubmit="javascript:return false;">
+				<div>
+					<input type="text" id="term" name="term" value="" onfocus="checkDefaultText(); return true;" onkeyup="form_change(); return true;" />
+					<a href="#show-all" class="option" onclick="javascript:refresh(); return false;">show all</a>
+				</div>
+				<div>
+					<div><div id="participants_container"></div></div>
+					<div id="options">
+						<input id="show_images" name="show_images" type="checkbox" checked="checked" onchange="javascript:checkDefaultText(); form_change(); return true;" />
+						<label for="show_images">Show images</label>
+						<a target="_blank" href="http://code.google.com/p/wave-roster-list/" class="option">(gadget info)</a>
+					</div>
+				</div>
+			</form>
+		</div>
+
+		<script language="JavaScript" type="text/javascript">
+
+			var PAGE_SIZE = 10;
+			var initialized = false;
+			var show_default_text = true;
+
+			function renderList( searchterm, limit_start )
+			{
+				if( ! initialized )
+				{
+					initialized = true;
+					return;
+				}
+
+				if( show_default_text )
+				{
+					num_peeps = wave.getParticipants().length;
+					document.getElementById( 'term' ).value = "(Search " + num_peeps
+						+ ( 1 == num_peeps ? " participant)" : " participants)" );
+
+					// Tells gadget to resize itself
+					gadgets.window.adjustHeight();
+					return;
+				}
+
+				if(!wave.getState()) { return; }
+				addOptions( wave.getParticipants(), searchterm, limit_start );
+			}
+
+			function addOptions( participants, searchterm, limit_start )
+			{
+				participants_container = document.getElementById( 'participants_container' );
+				searchform = document.forms[ 'searchform' ];
+				do_show_images = searchform.elements[ 'show_images' ].checked;
+				list_html = "";
+				num_participants = participants.length;
+				num_matches = 0;
+				limit_start = limit_start || 0;
+				limit_end = limit_start + PAGE_SIZE;
+				highlight = true;
+				for( var i = 0; i < num_participants; i++ )
+				{
+					label = getLabel( participants[ i ] );
+					if( searchterm && searchterm != "" )
+					{
+						pattern = "(" + RegExp.escape( searchterm ) + ")";
+						searchpattern = new RegExp( pattern, 'ig' );
+						if( ! label.match( searchpattern ) )
+						{
+							continue;
+						}
+						label = label.replace( searchpattern, "<strong>$1</strong>" );
+					}
+					num_matches++;
+					if( num_matches <= limit_start ) { continue; }
+					if( num_matches > limit_end ) { continue; }
+					highlight = ! highlight;
+					li_attr = '';
+					img_html = '';
+					if( do_show_images )
+					{
+						profile_img = participants[ i ].getThumbnailUrl();
+						if( profile_img )
+						{
+							display_name = participants[ i ].getDisplayName();
+							img_html = '<img src="' + profile_img + '" class="profileimg" width="40" height="40" title="' + display_name + '" alt="' + display_name + '" />';
+						}
+					}
+					else if( highlight )
+					{
+						li_attr = ' class="glite"';
+					}
+					list_html += '<li' + li_attr + '>' + img_html + label + "</li>\n";
+				}
+
+				// Finally, update the list
+				participants_container.innerHTML =
+					getPaginationHTML( limit_start, num_matches )
+					+ '<ul class="participants">\n' + list_html + "</ul>\n";
+
+				// Tells gadget to resize itself
+				gadgets.window.adjustHeight();
+			}
+
+			function getLabel( participant )
+			{
+				return participant.getDisplayName()
+					+ " (" + participant.getId() + ")";
+			}
+
+			function getPaginationHTML( limit_start, num_matches )
+			{
+				// Update the limits and increment them from 0-based to 1-based numbers
+				show_limit_end = limit_start + Math.min( PAGE_SIZE, num_matches ) - 1;
+				show_limit_start = limit_start + 1;
+				show_limit_end++;
+				if( 0 == num_matches ) { show_limit_start = 0; }
+
+				controls_html = '';
+				if( limit_start > 0 )
+				{
+					controls_html += ' <a href="#back" onclick="javascript:checkDefaultText(); form_change(' + ( limit_start - PAGE_SIZE ) + '); return false;">&laquo; back</a>&nbsp; ';
+				}
+				if( show_limit_end < num_matches )
+				{
+					controls_html += ' <a href="#forward" onclick="javascript:checkDefaultText(); form_change(' + ( limit_start + PAGE_SIZE ) + '); return false;">forward &raquo;</a>';
+				}
+				if( controls_html )
+				{
+					controls_html = '<span class="pagination_controls">' + controls_html + '</span>';
+				}
+
+				return '<div>'
+						+ 'Showing <strong>' + show_limit_start + '</strong>'
+						+ ' - <strong>' + show_limit_end + '</strong>'
+						+ ' of <strong>' + num_matches + '</strong>'
+						+ controls_html
+					+ '</div>\n';
+			}
+
+			function checkDefaultText()
+			{
+				if( show_default_text )
+				{
+					document.getElementById( 'term' ).value = '';
+					show_default_text = false;
+				}
+			}
+
+			function form_change( limit_start )
+			{
+				renderList( document.getElementById( 'term' ).value, limit_start );
+			}
+
+			function refresh()
+			{
+				document.getElementById( 'term' ).value = '';
+				show_default_text = false;
+				form_change();
+				show_default_text = true;
+				form_change();
+			}
+
+			function init()
+			{
+				// Thanks to http://simonwillison.net/2006/Jan/20/escape/
+				RegExp.escape = function(text)
+				{
+					if (!arguments.callee.sRE)
+					{
+						var specials =
+						[
+							'/', '.', '*', '+', '?', '|',
+							'(', ')', '[', ']', '{', '}', '\\'
+						];
+						arguments.callee.sRE = new RegExp( '(\\' + specials.join('|\\') + ')', 'g' );
+					}
+					return text.replace(arguments.callee.sRE, '\\$1');
+				}
+
+				if (wave && wave.isInWaveContainer())
+				{
+					wave.setStateCallback( form_change );
+					wave.setParticipantCallback( form_change );
+				}
+			}
+			gadgets.util.registerOnLoadHandler(init);
+		</script>
+
+
+	]]></Content>
+</Module>
