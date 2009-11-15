@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Module>
 	<ModulePrefs
-		title="Hello Wave"
+		directory_title="Roster List Gadget for Google \/\/ave"
+		title="Roster List Gadget for Google \/\/ave"
 		title_url="http://code.google.com/p/wave-roster-list/"
 		description="Search through wave participants"
 		author="Stephen F. George"
