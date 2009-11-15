@@ -7,6 +7,7 @@
 		author="Stephen F. George"
 		author_email="s.f.george+roster@gmail.com"
 		screenshot="http://wave-roster-list.googlecode.com/svn/trunk/images/screenshot.png"
+		thumbnail="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-w182.png"
 		height="40">
 		<Require feature="wave" />
 		<Require feature="dynamic-height" /> 
