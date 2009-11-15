@@ -13,7 +13,6 @@
 		<Require feature="wave" />
 		<Require feature="dynamic-height" />
 		<Require feature="locked-domain" />
-		<Require feature="minimessage" />
 	</ModulePrefs>
 	<Content type="html" preferred_height="40"><![CDATA[
 
