@@ -179,16 +179,12 @@
 
 			function getAboutGadgetHTML()
 			{
-				if( gadgets.MiniMessage )
-				{
-					( new gadgets.MiniMessage() ).createTimerMessage( document.location.href, 5 );
-				}
 				var about_url = 'https://wave.google.com/a/wavesandbox.com/#restored:wave:wavesandbox.com!w%252ByUWu0XBCA';
-				if( document.location.pathname.indexOf( '/a/wavesandbox.com' ) == -1 )
+				if( document.location.search.indexOf( 'waveId=wavesandbox.com' ) == -1 )
 				{
 					about_url = 'https://wave.google.com/wave/?pli=1#restored:wave:googlewave.com!w%252Bk2VcYCfkA';
 				} 
-				return '<span class="about"><a href="' + about_url + '>(about this gadget ...)</a></span>';
+				return '<span class="about"><a target="_blank" href="' + about_url + '>(about this gadget ...)</a></span>';
 			}
 
 			function checkDefaultText()
