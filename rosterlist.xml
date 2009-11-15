@@ -13,6 +13,7 @@
 		<Require feature="wave" />
 		<Require feature="dynamic-height" />
 		<Require feature="locked-domain" />
+		<Require feature="minimessage" />
 	</ModulePrefs>
 	<Content type="html" preferred_height="40"><![CDATA[
 
@@ -178,6 +179,7 @@
 
 			function getAboutGadgetHTML()
 			{
+				gadgets.MiniMessage.createTimerMessage( document.location.href, 5 );
 				var about_url = 'https://wave.google.com/a/wavesandbox.com/#restored:wave:wavesandbox.com!w%252ByUWu0XBCA';
 				if( document.location.pathname.indexOf( '/a/wavesandbox.com' ) == -1 )
 				{
