@@ -1,10 +1,10 @@
 <extension
 	name="Roster List Gadget"
 	description="Search through wave participants"
-	thumbnailUrl="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-w182.png">
+	thumbnailUrl="http://wave-roster-list.googlecode.com/svn/branches/sid/images/roster-w182-green.png">
 	<author name="Stephen F. George (sfgeorge@googlewave.com)"/>
 	<menuHook location="TOOLBAR" text="Insert a roster list gadget"
-		iconUrl="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-h22.png">
-		<insertGadget url="http://wave-roster-list.googlecode.com/svn/trunk/rosterlist.xml"/>
+		iconUrl="http://wave-roster-list.googlecode.com/svn/branches/sid/images/roster-h22-green.png">
+		<insertGadget url="http://wave-roster-list.googlecode.com/svn/branches/sid/rosterlist.xml"/>
 	</menuHook>
 </extension>
