@@ -4,7 +4,7 @@
 	thumbnailUrl="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-w182.png">
 	<author name="Stephen F. George (sfgeorge@googlewave.com)"/>
 	<menuHook location="TOOLBAR" text="Insert a roster list gadget"
-	iconUrl="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-h22.png">
+		iconUrl="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-h22.png">
 		<insertGadget url="http://wave-roster-list.googlecode.com/svn/trunk/rosterlist.xml"/>
 	</menuHook>
 </extension>
