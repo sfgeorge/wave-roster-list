@@ -9,7 +9,7 @@
 		author_email="s.f.george+roster@gmail.com"
 		screenshot="http://wave-roster-list.googlecode.com/svn/trunk/images/screenshot.png"
 		thumbnail="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-w182.png"
-		height="20">
+		height="10">
 		<Require feature="wave" />
 		<Require feature="dynamic-height" />
 		<Require feature="locked-domain" />
@@ -179,7 +179,10 @@
 
 			function getAboutGadgetHTML()
 			{
-				gadgets.MiniMessage.createTimerMessage( document.location.href, 5 );
+				if( gadgets.MiniMessage )
+				{
+					( new gadgets.MiniMessage() ).createTimerMessage( document.location.href, 5 );
+				}
 				var about_url = 'https://wave.google.com/a/wavesandbox.com/#restored:wave:wavesandbox.com!w%252ByUWu0XBCA';
 				if( document.location.pathname.indexOf( '/a/wavesandbox.com' ) == -1 )
 				{
