@@ -9,12 +9,12 @@
 		author_email="s.f.george+roster@gmail.com"
 		screenshot="http://wave-roster-list.googlecode.com/svn/trunk/images/screenshot.png"
 		thumbnail="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-w182.png"
-		height="10">
+		height="20">
 		<Require feature="wave" />
 		<Require feature="dynamic-height" />
 		<Require feature="locked-domain" />
 	</ModulePrefs>
-	<Content type="html" preferred_height="40"><![CDATA[
+	<Content type="html" preferred_height="20"><![CDATA[
 
 
 		<style type="text/css">
@@ -32,6 +32,7 @@
 			ul.participants li { padding-bottom: 1px; }
 			.profileimg { padding-right: 5px; vertical-align: middle; }
 			.glite { background-color: #eeeeee; }
+			.termmatch { color: #ee6600; }
 			.small { font-size: smaller; }
 			.option { padding-left: 10px; }
 			.pagination_controls { padding-left: 15px; font-size: smaller; }
@@ -104,7 +105,7 @@
 						{
 							continue;
 						}
-						label = label.replace( searchpattern, "<strong>$1</strong>" );
+						label = label.replace( searchpattern, '<span class="termmatch">$1</span>' );
 					}
 					num_matches++;
 					if( num_matches <= limit_start ) { continue; }
