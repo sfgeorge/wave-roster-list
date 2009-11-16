@@ -35,14 +35,14 @@
 			.termmatch { color: #ee6600; }
 			.small { font-size: smaller; }
 			.option { padding-left: 10px; }
-			.pagination_controls { padding-left: 15px; font-size: smaller; }
-			.about { font-size: smaller; margin-top: 3px; }
+			.pagination_controls { padding-left: 15px; }
+			.about { margin-top: 3px; }
 			.about a { font-size: smaller; }
 		</style>
 
-		<div id="content_div">
+		<div class="small">
 			<form name="searchform" method="get" onsubmit="javascript:return false;">
-				<div class="small">
+				<div>
 					<input type="text" id="term" name="term" class="termbox" value="" onfocus="checkDefaultText(); return true;" onkeyup="form_change(); return true;" />
 					<a href="#show-all" class="option" onclick="javascript:refresh(); return false;">show all</a>
 					<span class="option">
