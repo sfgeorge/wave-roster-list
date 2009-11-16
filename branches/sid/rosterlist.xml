@@ -9,12 +9,12 @@
 		author_email="s.f.george+roster@gmail.com"
 		screenshot="http://wave-roster-list.googlecode.com/svn/trunk/images/screenshot.png"
 		thumbnail="http://wave-roster-list.googlecode.com/svn/trunk/images/roster-w182.png"
-		height="10">
+		height="20">
 		<Require feature="wave" />
 		<Require feature="dynamic-height" />
 		<Require feature="locked-domain" />
 	</ModulePrefs>
-	<Content type="html" preferred_height="10"><![CDATA[
+	<Content type="html" preferred_height="20"><![CDATA[
 
 
 		<style type="text/css">
