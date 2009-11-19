@@ -43,10 +43,10 @@
 		<div class="small">
 			<form name="searchform" method="get" onsubmit="javascript:return false;">
 				<div>
-					<input type="text" id="term" name="term" class="termbox" value="" onfocus="checkDefaultText(); return true;" onkeyup="form_change(); return true;" />
-					<a href="#show-all" class="option" onclick="javascript:refresh(); return false;">show all</a>
+					<input type="text" id="term" name="term" class="termbox" value="" onfocus="checkDefaultText(); return true;" onkeyup="term_change(); return true;" />
+					<a href="#show-all" class="option" onclick="javascript:show_all(); return false;">show all</a>
 					<span class="option">
-						<input id="show_images" name="show_images" type="checkbox" class="checkbox" checked="checked" onchange="javascript:checkDefaultText(); form_change(); return true;" />
+						<input id="show_images" name="show_images" type="checkbox" class="checkbox" checked="checked" onchange="javascript:checkDefaultText(); term_change(); return true;" />
 						<label for="show_images">Show images</label>
 					</span>
 				</div>
@@ -56,10 +56,54 @@
 
 		<script language="JavaScript" type="text/javascript">
 
-			var PAGE_SIZE = 10;
+			/**
+			 * This code uses the Google Closure JavaScript annotations specified on
+			 * http://code.google.com/closure/compiler/docs/js-for-compiler.html
+			 * See also http://closure-compiler.appspot.com/home
+			 */
+
+			/** @const */ var PAGE_SIZE = 10;
 			var initialized = false;
 			var show_default_text = true;
 
+			/// Public Functions (externalized) ///
+
+			function checkDefaultText()
+			{
+				if( show_default_text )
+				{
+					document.getElementById( 'term' ).value = '';
+					show_default_text = false;
+				}
+			}
+
+			function term_change( limit_start )
+			{
+				renderList( document.getElementById( 'term' ).value, limit_start );
+			}
+
+			function show_all()
+			{
+				show_default_text = true;
+				checkDefaultText();
+				term_change();
+				show_default_text = true;
+				term_change();
+			}
+
+			document[ 'checkDefaultText' ] = checkDefaultText;
+			document[ 'term_change' ] = term_change;
+			document[ 'show_all' ] = show_all;
+
+			/// Private Functions ///
+
+			/**
+			 * Renders the search result list and/or updates the search box status text
+			 * @private
+			 * @param {?string} searchterm  The search term used to search the list. This may be empty.
+			 * @param {?number} limit_start  Specifies the record # at which to begin rendering.  This is
+			 * useful for paginating results 10-19, for example.
+			 */
 			function renderList( searchterm, limit_start )
 			{
 				if( ! initialized )
@@ -71,8 +115,9 @@
 				if( show_default_text )
 				{
 					num_peeps = wave.getParticipants().length;
-					document.getElementById( 'term' ).value = "(Search " + num_peeps
-						+ ( 1 == num_peeps ? " participant)" : " participants)" );
+					document.getElementById( 'term' ).value
+						= '(Search ' + num_peeps + ' participant'
+						+ ( 1 == num_peeps ? '' : 's' ) + ')';
 
 					// Tells gadget to resize itself
 					gadgets.window.adjustHeight();
@@ -124,7 +169,7 @@
 					}
 					if( highlight )
 					{
-						li_attr = ' class="glite"';
+						li_attr += ' class="glite"';
 					}
 					list_html += '<li' + li_attr + '>' + img_html + label + "</li>\n";
 				}
@@ -158,11 +203,11 @@
 				controls_html = '';
 				if( limit_start > 0 )
 				{
-					controls_html += ' <a href="#back" onclick="javascript:checkDefaultText(); form_change(' + ( limit_start - PAGE_SIZE ) + '); return false;">&laquo; back</a>&nbsp; ';
+					controls_html += ' <a href="#back" onclick="javascript:checkDefaultText(); term_change(' + ( limit_start - PAGE_SIZE ) + '); return false;">&laquo; back</a>&nbsp; ';
 				}
 				if( show_limit_end < num_matches )
 				{
-					controls_html += ' <a href="#forward" onclick="javascript:checkDefaultText(); form_change(' + ( limit_start + PAGE_SIZE ) + '); return false;">forward &raquo;</a>';
+					controls_html += ' <a href="#forward" onclick="javascript:checkDefaultText(); term_change(' + ( limit_start + PAGE_SIZE ) + '); return false;">forward &raquo;</a>';
 				}
 				if( controls_html )
 				{
@@ -179,40 +224,30 @@
 
 			function getAboutGadgetHTML()
 			{
-				var about_url = 'https://wave.google.com/a/wavesandbox.com/#restored:wave:wavesandbox.com!w%252ByUWu0XBCA';
-				if( document.location.search.indexOf( 'waveId=wavesandbox.com' ) == -1 )
+				var about_url = 'http://code.google.com/p/wave-roster-list/';
+				if( document.location.search.indexOf( 'waveId=googlewave.com' ) != -1 )
 				{
-					about_url = 'https://wave.google.com/wave/?pli=1#restored:wave:googlewave.com!w%252Bk2VcYCfkA';
-				} 
+					about_url = 'https://wave.google.com/wave/#restored:wave:googlewave.com!w%252Bk2VcYCfkA';
+				}
+				else if( document.location.search.indexOf( 'waveId=wavesandbox.com' ) != -1 )
+				{
+					about_url = 'https://wave.google.com/a/wavesandbox.com/#restored:wave:wavesandbox.com!w%252ByUWu0XBCA';
+				}
 				return '<span class="about"><a target="_blank" href="' + about_url + '>(about this gadget ...)</a></span>';
 			}
 
-			function checkDefaultText()
+			function simple_term_change()
 			{
-				if( show_default_text )
-				{
-					document.getElementById( 'term' ).value = '';
-					show_default_text = false;
-				}
-			}
-
-			function form_change( limit_start )
-			{
-				renderList( document.getElementById( 'term' ).value, limit_start );
-			}
-
-			function refresh()
-			{
-				document.getElementById( 'term' ).value = '';
-				show_default_text = false;
-				form_change();
-				show_default_text = true;
-				form_change();
+				term_change();
 			}
 
 			function init()
 			{
-				// Thanks to http://simonwillison.net/2006/Jan/20/escape/
+				/**
+				 * @license Thanks to
+				 * http://simonwillison.net/2006/Jan/20/escape/
+				 * for this RegEx character-escaper
+				 */
 				RegExp.escape = function(text)
 				{
 					if (!arguments.callee.sRE)
@@ -230,11 +265,11 @@
 
 				if (wave && wave.isInWaveContainer())
 				{
-					wave.setStateCallback( form_change );
-					wave.setParticipantCallback( form_change );
+					wave.setStateCallback( simple_term_change );
+					wave.setParticipantCallback( simple_term_change );
 				}
 			}
-			gadgets.util.registerOnLoadHandler(init);
+			gadgets.util.registerOnLoadHandler( init );
 		</script>
 
 
