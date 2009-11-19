@@ -27,7 +27,7 @@
 				list-style-type: none;
 			}
 
-			.termbox { width: 13.5em; }
+			.termbox { width: 12.6em; }
 			.checkbox { vertical-align: text-bottom; }
 			ul.participants li { padding-bottom: 1px; }
 			.profileimg { padding-right: 5px; vertical-align: middle; }
