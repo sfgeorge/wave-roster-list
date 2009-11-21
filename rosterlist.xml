@@ -36,6 +36,7 @@
 			.small { font-size: smaller; }
 			.option { padding-left: 10px; }
 			.pagination_controls { padding-left: 15px; }
+			.invisible { visibility: hide; visibility: hidden; }
 			.about { margin-top: 3px; }
 			.about a { font-size: smaller; }
 		</style>
@@ -200,19 +201,13 @@
 				show_limit_end++;
 				if( 0 == num_matches ) { show_limit_start = 0; }
 
-				controls_html = '';
-				if( limit_start > 0 )
-				{
-					controls_html += ' <a href="#back" onclick="javascript:checkDefaultText(); term_change(' + ( limit_start - PAGE_SIZE ) + '); return false;">&laquo; back</a>&nbsp; ';
-				}
-				if( show_limit_end < num_matches )
-				{
-					controls_html += ' <a href="#forward" onclick="javascript:checkDefaultText(); term_change(' + ( limit_start + PAGE_SIZE ) + '); return false;">forward &raquo;</a>';
-				}
-				if( controls_html )
-				{
-					controls_html = '<span class="pagination_controls">' + controls_html + '</span>';
-				}
+				control_attr = limit_start > 0 ? '' : ' class="invisible"';
+				controls_html = ' <a' + control_attr + ' href="#back" onclick="javascript:checkDefaultText(); term_change(' + ( limit_start - PAGE_SIZE ) + '); return false;">&laquo; back</a>&nbsp; ';
+
+				control_attr = show_limit_end < num_matches ? '' : ' class="invisible"';
+				controls_html += ' <a' + control_attr + ' href="#forward" onclick="javascript:checkDefaultText(); term_change(' + ( limit_start + PAGE_SIZE ) + '); return false;">forward &raquo;</a>';
+
+				controls_html = '<span class="pagination_controls">' + controls_html + '</span>';
 
 				return '<div>'
 						+ 'Showing <strong>' + show_limit_start + '</strong>'
