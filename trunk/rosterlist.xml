@@ -36,6 +36,7 @@
 			.small { font-size: smaller; }
 			.option { padding-left: 10px; }
 			.pagination_controls { padding-left: 15px; }
+			.invisible { visibility: hide; visibility: hidden; }
 			.about { margin-top: 3px; }
 			.about a { font-size: smaller; }
 		</style>
@@ -135,7 +136,7 @@
 				do_show_images = searchform.elements[ 'show_images' ].checked;
 				list_html = "";
 				num_participants = participants.length;
-				num_matches = 0;
+				num_shown = num_matches = 0;
 				limit_start = limit_start || 0;
 				limit_end = limit_start + PAGE_SIZE;
 				highlight = true;
@@ -155,6 +156,7 @@
 					num_matches++;
 					if( num_matches <= limit_start ) { continue; }
 					if( num_matches > limit_end ) { continue; }
+					num_shown++;
 					highlight = ! highlight;
 					li_attr = '';
 					img_html = '';
@@ -178,7 +180,7 @@
 
 				// Finally, update the list
 				participants_container.innerHTML =
-					getPaginationHTML( limit_start, num_matches )
+					getPaginationHTML( limit_start, num_shown, num_matches )
 					+ '<div>\n<ul class="participants">\n' + list_html + '</ul>\n</div>\n'
 					+ '<div>' + about_html + '</div>\n';
 
@@ -192,27 +194,20 @@
 					+ " (" + participant.getId() + ")";
 			}
 
-			function getPaginationHTML( limit_start, num_matches )
+			function getPaginationHTML( limit_start, num_shown, num_matches )
 			{
 				// Update the limits and increment them from 0-based to 1-based numbers
-				show_limit_end = limit_start + Math.min( PAGE_SIZE, num_matches ) - 1;
 				show_limit_start = limit_start + 1;
-				show_limit_end++;
 				if( 0 == num_matches ) { show_limit_start = 0; }
+				show_limit_end = limit_start + num_shown;
 
-				controls_html = '';
-				if( limit_start > 0 )
-				{
-					controls_html += ' <a href="#back" onclick="javascript:checkDefaultText(); term_change(' + ( limit_start - PAGE_SIZE ) + '); return false;">&laquo; back</a>&nbsp; ';
-				}
-				if( show_limit_end < num_matches )
-				{
-					controls_html += ' <a href="#forward" onclick="javascript:checkDefaultText(); term_change(' + ( limit_start + PAGE_SIZE ) + '); return false;">forward &raquo;</a>';
-				}
-				if( controls_html )
-				{
-					controls_html = '<span class="pagination_controls">' + controls_html + '</span>';
-				}
+				control_attr = limit_start > 0 ? '' : ' class="invisible"';
+				controls_html = ' <a' + control_attr + ' href="#back" onclick="javascript:checkDefaultText(); term_change(' + ( limit_start - PAGE_SIZE ) + '); return false;">&laquo; back</a>&nbsp; ';
+
+				control_attr = show_limit_end < num_matches ? '' : ' class="invisible"';
+				controls_html += ' <a' + control_attr + ' href="#forward" onclick="javascript:checkDefaultText(); term_change(' + ( limit_start + PAGE_SIZE ) + '); return false;">forward &raquo;</a>';
+
+				controls_html = '<span class="pagination_controls">' + controls_html + '</span>';
 
 				return '<div>'
 						+ 'Showing <strong>' + show_limit_start + '</strong>'
