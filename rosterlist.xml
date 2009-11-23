@@ -30,6 +30,7 @@
 			.termbox { width: 12.6em; }
 			.checkbox { vertical-align: text-bottom; }
 			ul.participants li { padding-bottom: 1px; }
+			.removelink { color: #ff0000; }
 			.profileimg { padding-right: 5px; vertical-align: middle; }
 			.glite { background-color: #eeeeee; }
 			.termmatch { color: #ee6600; }
@@ -160,6 +161,8 @@
 					highlight = ! highlight;
 					li_attr = '';
 					img_html = '';
+					label += ' <a class="removelink" href="#remove" onclick="javascript:requestRemoval( \'' + participants[ i ].getId() + '\' ); return false;">[ remove ]</a>';
+
 					if( do_show_images )
 					{
 						profile_img = participants[ i ].getThumbnailUrl();
@@ -229,6 +232,12 @@
 					about_url = 'https://wave.google.com/a/wavesandbox.com/#restored:wave:wavesandbox.com!w%252ByUWu0XBCA';
 				}
 				return '<span class="about"><a target="_blank" href="' + about_url + '>(about this gadget ...)</a></span>';
+			}
+
+			function requestRemoval( participant_id )
+			{
+				var state = wave.getState();
+			    state.submitValue( 'remove_id', participant_id );
 			}
 
 			function simple_term_change()
