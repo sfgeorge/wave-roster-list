@@ -228,7 +228,7 @@
 				{
 					about_url = 'https://wave.google.com/a/wavesandbox.com/#restored:wave:wavesandbox.com!w%252ByUWu0XBCA';
 				}
-				return '<span class="about"><a target="_blank" href="' + about_url + '>(about this gadget ...)</a></span>';
+				return '<span class="about"><a target="_blank" href="' + about_url + '">(about this gadget ...)</a></span>';
 			}
 
 			function simple_term_change()
